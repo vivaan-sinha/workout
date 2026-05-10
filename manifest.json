@@ -2,7 +2,7 @@
   "name": "Home Workout Tracker",
   "short_name": "Workout",
   "description": "Exam period maintenance workout tracker",
-  "start_url": "/",
+  "start_url": "/workout/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
