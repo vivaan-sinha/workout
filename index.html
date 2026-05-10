@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Workout">
+<meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.json">
+<title>Home Workout</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #1a1a1a; max-width: 480px; margin: 0 auto; min-height: 100vh; }
+  
+  .topbar { background: #fff; padding: 16px 20px 12px; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
+  .topbar h1 { font-size: 20px; font-weight: 600; }
+  .topbar p { font-size: 13px; color: #888; margin-top: 2px; }
+
+  .tabs { display: flex; background: #fff; border-bottom: 1px solid #eee; }
+  .tab { flex: 1; padding: 12px 0; text-align: center; font-size: 14px; color: #888; border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; font-weight: 500; }
+  .tab.active { color: #1a1a1a; border-bottom-color: #1a1a1a; }
+
+  .content { padding: 16px; }
+
+  .day-badge { display: inline-block; background: #f0f0f0; color: #555; font-size: 12px; padding: 4px 12px; border-radius: 20px; margin-bottom: 16px; font-weight: 500; }
+
+  .ex-card { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .ex-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
+  .ex-name { font-size: 16px; font-weight: 600; }
+  .done-check { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #ddd; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.2s; flex-shrink: 0; }
+  .done-check.checked { background: #22c55e; border-color: #22c55e; color: #fff; }
+  .suggestion { font-size: 12px; color: #888; margin-bottom: 12px; }
+  .suggestion.up { color: #16a34a; font-weight: 500; }
+
+  .sets-header { display: grid; grid-template-columns: 36px 1fr 1fr 60px; gap: 6px; margin-bottom: 6px; }
+  .sets-header span { font-size: 11px; color: #aaa; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; }
+  .set-row { display: grid; grid-template-columns: 36px 1fr 1fr 60px; gap: 6px; margin-bottom: 6px; align-items: center; }
+  .set-num { font-size: 13px; color: #aaa; text-align: center; }
+  .set-row input { padding: 8px 6px; font-size: 15px; text-align: center; border: 1px solid #e5e5e5; border-radius: 8px; background: #fafafa; color: #1a1a1a; width: 100%; }
+  .set-row input:focus { outline: none; border-color: #1a1a1a; background: #fff; }
+  .target-badge { font-size: 12px; color: #aaa; text-align: center; }
+
+  .rest-timer { background: #f8f8f8; border-radius: 10px; padding: 10px 14px; margin-top: 10px; display: flex; align-items: center; justify-content: space-between; }
+  .rest-label { font-size: 13px; color: #888; }
+  .rest-btn { padding: 6px 14px; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; }
+  .rest-count { font-size: 16px; font-weight: 600; color: #1a1a1a; min-width: 40px; text-align: center; }
+
+  .save-btn { width: 100%; padding: 14px; background: #1a1a1a; color: #fff; border: none; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; letter-spacing: 0.3px; }
+  .save-btn:active { opacity: 0.8; }
+
+  .hist-card { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .hist-date { font-size: 13px; color: #888; margin-bottom: 10px; font-weight: 500; }
+  .hist-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+  .hist-row:last-child { border-bottom: none; }
+  .hist-val { color: #888; font-size: 13px; }
+
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .stat-box { background: #fff; border-radius: 14px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .stat-label { font-size: 12px; color: #888; margin-bottom: 4px; }
+  .stat-val { font-size: 28px; font-weight: 600; }
+
+  .prog-card { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .prog-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .prog-row { display: flex; justify-content: space-between; font-size: 14px; }
+  .prog-gain { color: #16a34a; font-weight: 500; }
+  .prog-loss { color: #dc2626; font-weight: 500; }
+
+  .empty { text-align: center; padding: 40px 20px; color: #aaa; font-size: 14px; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; padding: 12px 24px; border-radius: 10px; font-size: 14px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100; white-space: nowrap; }
+  .toast.show { opacity: 1; }
+
+  .timer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 50; align-items: center; justify-content: center; }
+  .timer-overlay.show { display: flex; }
+  .timer-box { background: #fff; border-radius: 20px; padding: 32px; text-align: center; width: 260px; }
+  .timer-title { font-size: 15px; color: #888; margin-bottom: 8px; }
+  .timer-num { font-size: 56px; font-weight: 700; margin-bottom: 20px; }
+  .timer-skip { padding: 10px 28px; background: #1a1a1a; color: #fff; border: none; border-radius: 10px; font-size: 15px; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>Home Workout</h1>
+  <p id="top-date">Exam period maintenance</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('workout')">Today</button>
+  <button class="tab" onclick="showTab('history')">History</button>
+  <button class="tab" onclick="showTab('stats')">Progress</button>
+</div>
+
+<div class="content" id="content"></div>
+
+<div class="toast" id="toast"></div>
+
+<div class="timer-overlay" id="timer-overlay">
+  <div class="timer-box">
+    <div class="timer-title">Rest timer</div>
+    <div class="timer-num" id="timer-num">60</div>
+    <button class="timer-skip" onclick="skipTimer()">Done resting</button>
+  </div>
+</div>
+
+<script>
+const EXERCISES = [
+  { id: 'pushup', name: 'Push-ups', sets: 3, repsTarget: 15, weight: false, note: 'Standard — go to failure' },
+  { id: 'widepush', name: 'Wide push-ups', sets: 3, repsTarget: 12, weight: false, note: 'Hands wider than shoulder width' },
+  { id: 'diamondpush', name: 'Diamond push-ups', sets: 3, repsTarget: 10, weight: false, note: 'Hands form a diamond shape' },
+  { id: 'dbpress', name: 'Dumbbell shoulder press', sets: 3, repsTarget: 12, weight: true, note: '5kg dumbbell, seated or standing' },
+  { id: 'lateral', name: 'Lateral raises', sets: 3, repsTarget: 15, weight: true, note: '5kg dumbbell, slow and controlled' },
+  { id: 'curl', name: 'Bicep curls', sets: 3, repsTarget: 12, weight: true, note: '5kg dumbbell, one arm or both' },
+  { id: 'tricepkick', name: 'Tricep kickbacks', sets: 3, repsTarget: 12, weight: true, note: '5kg dumbbell, hinge at hips' },
+  { id: 'squat', name: 'Bodyweight squats', sets: 3, repsTarget: 20, weight: false, note: 'Full depth, slow down' },
+  { id: 'lunge', name: 'Lunges', sets: 3, repsTarget: 12, weight: false, note: 'Each leg — alternate' },
+  { id: 'glute', name: 'Glute bridges', sets: 3, repsTarget: 20, weight: false, note: 'Squeeze at the top, hold 1 sec' },
+  { id: 'plank', name: 'Plank', sets: 3, repsTarget: 60, weight: false, note: 'Hold in seconds — stay tight' },
+];
+
+const DAYS = ['Day A', 'Day B', 'Day C'];
+let timerInterval = null;
+let timerSeconds = 0;
+let currentTab = 'workout';
+
+function getData() { try { return JSON.parse(localStorage.getItem('hw_data') || '{}'); } catch { return {}; } }
+function saveData(d) { try { localStorage.setItem('hw_data', JSON.stringify(d)); } catch {} }
+
+function getTodayKey() { return new Date().toISOString().split('T')[0]; }
+
+function getSessionCount() {
+  const d = getData();
+  return Object.keys(d.sessions || {}).length;
+}
+
+function getLastSession(exId) {
+  const d = getData();
+  const keys = Object.keys(d.sessions || {}).sort().reverse();
+  for (const k of keys) {
+    if (d.sessions[k][exId]) return d.sessions[k][exId];
+  }
+  return null;
+}
+
+function getSuggestion(ex) {
+  const last = getLastSession(ex.id);
+  if (!last) return { text: 'First time — start easy', cls: '' };
+  if (!ex.weight) {
+    const allHit = last.sets.every(s => parseInt(s.reps) >= ex.repsTarget);
+    return allHit
+      ? { text: 'Try harder variation or add a set', cls: 'up' }
+      : { text: `Target: ${ex.repsTarget} reps — keep pushing`, cls: '' };
+  }
+  const allHit = last.sets.every(s => parseInt(s.reps) >= ex.repsTarget);
+  return allHit
+    ? { text: 'All sets hit — increase reps or slow down tempo', cls: 'up' }
+    : { text: `Same weight 5kg — hit ${ex.repsTarget} reps first`, cls: '' };
+}
+
+function renderWorkout() {
+  const d = getData();
+  const todayKey = getTodayKey();
+  const existing = (d.sessions || {})[todayKey] || {};
+  const done = d.done || {};
+  const dayLabel = DAYS[getSessionCount() % 3];
+
+  document.getElementById('top-date').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' });
+
+  let html = `<span class="day-badge">${dayLabel} — Exam maintenance</span>`;
+
+  EXERCISES.forEach(ex => {
+    const sug = getSuggestion(ex);
+    const isDone = !!done[ex.id];
+    const prev = existing[ex.id];
+
+    html += `<div class="ex-card" id="card-${ex.id}">
+      <div class="ex-header">
+        <div class="ex-name">${ex.name}</div>
+        <button class="done-check ${isDone ? 'checked' : ''}" onclick="toggleDone('${ex.id}')">${isDone ? '✓' : ''}</button>
+      </div>
+      <div class="suggestion ${sug.cls}">${sug.text}</div>
+      <div style="font-size:12px;color:#bbb;margin-bottom:10px;">${ex.note}</div>
+      <div class="sets-header">
+        <span>Set</span>
+        <span>${ex.weight ? 'Weight' : 'Reps'}</span>
+        <span>${ex.weight ? 'Reps' : 'Notes'}</span>
+        <span>Target</span>
+      </div>`;
+
+    for (let i = 1; i <= ex.sets; i++) {
+      const ps = prev ? prev.sets[i-1] : null;
+      if (ex.weight) {
+        html += `<div class="set-row">
+          <div class="set-num">${i}</div>
+          <input type="number" id="${ex.id}-w${i}" placeholder="5" value="${ps ? ps.weight : '5'}" step="0.5" min="0" inputmode="decimal">
+          <input type="number" id="${ex.id}-r${i}" placeholder="0" value="${ps ? ps.reps : ''}" min="0" max="50" inputmode="numeric">
+          <div class="target-badge">${ex.repsTarget}</div>
+        </div>`;
+      } else {
+        html += `<div class="set-row">
+          <div class="set-num">${i}</div>
+          <input type="number" id="${ex.id}-r${i}" placeholder="0" value="${ps ? ps.reps : ''}" min="0" max="100" inputmode="numeric" style="grid-column: span 2;">
+          <div class="target-badge">${ex.repsTarget}</div>
+        </div>`;
+      }
+    }
+
+    html += `<div class="rest-timer">
+      <span class="rest-label">Rest 60s after sets</span>
+      <button class="rest-btn" onclick="startTimer(60)">Start</button>
+    </div></div>`;
+  });
+
+  html += `<button class="save-btn" onclick="saveSession()">Save session</button>`;
+  document.getElementById('content').innerHTML = html;
+}
+
+function toggleDone(exId) {
+  const d = getData();
+  if (!d.done) d.done = {};
+  d.done[exId] = !d.done[exId];
+  saveData(d);
+  renderWorkout();
+}
+
+function saveSession() {
+  const d = getData();
+  if (!d.sessions) d.sessions = {};
+  const todayKey = getTodayKey();
+  const session = {};
+
+  EXERCISES.forEach(ex => {
+    const sets = [];
+    let hasData = false;
+    for (let i = 1; i <= ex.sets; i++) {
+      const wEl = document.getElementById(`${ex.id}-w${i}`);
+      const rEl = document.getElementById(`${ex.id}-r${i}`);
+      const w = wEl ? wEl.value : '5';
+      const r = rEl ? rEl.value : '0';
+      if (r && r !== '0') hasData = true;
+      sets.push({ weight: w || '5', reps: r || '0' });
+    }
+    if (hasData) session[ex.id] = { weight: sets[0].weight || '5', sets };
+  });
+
+  d.sessions[todayKey] = session;
+  d.done = {};
+  saveData(d);
+  showToast('Session saved!');
+  setTimeout(() => renderWorkout(), 500);
+}
+
+function startTimer(secs) {
+  clearInterval(timerInterval);
+  timerSeconds = secs;
+  document.getElementById('timer-num').textContent = timerSeconds;
+  document.getElementById('timer-overlay').classList.add('show');
+  timerInterval = setInterval(() => {
+    timerSeconds--;
+    document.getElementById('timer-num').textContent = timerSeconds;
+    if (timerSeconds <= 0) skipTimer();
+  }, 1000);
+}
+
+function skipTimer() {
+  clearInterval(timerInterval);
+  document.getElementById('timer-overlay').classList.remove('show');
+}
+
+function renderHistory() {
+  const d = getData();
+  const keys = Object.keys(d.sessions || {}).sort().reverse();
+  if (!keys.length) {
+    document.getElementById('content').innerHTML = '<div class="empty">No sessions logged yet.<br>Complete your first workout!</div>';
+    return;
+  }
+  let html = '';
+  keys.slice(0, 15).forEach((key, idx) => {
+    const s = d.sessions[key];
+    const total = Object.keys(d.sessions).sort();
+    const sessionIdx = total.indexOf(key);
+    html += `<div class="hist-card"><div class="hist-date">${key} — ${DAYS[sessionIdx % 3]}</div>`;
+    EXERCISES.forEach(ex => {
+      if (s[ex.id]) {
+        const sets = s[ex.id].sets;
+        const summary = sets.map(st => ex.weight ? `${st.weight}kg×${st.reps}` : `${st.reps} reps`).join(' · ');
+        html += `<div class="hist-row"><span>${ex.name}</span><span class="hist-val">${summary}</span></div>`;
+      }
+    });
+    html += '</div>';
+  });
+  document.getElementById('content').innerHTML = html;
+}
+
+function renderStats() {
+  const d = getData();
+  const keys = Object.keys(d.sessions || {}).sort();
+  const total = keys.length;
+
+  let html = `<div class="stat-grid">
+    <div class="stat-box"><div class="stat-label">Sessions done</div><div class="stat-val">${total}</div></div>
+    <div class="stat-box"><div class="stat-label">Weeks trained</div><div class="stat-val">${Math.floor(total / 3)}</div></div>
+  </div>`;
+
+  if (total < 2) {
+    html += '<div class="empty">Complete at least 2 sessions<br>to see progress here</div>';
+    document.getElementById('content').innerHTML = html;
+    return;
+  }
+
+  EXERCISES.filter(ex => !ex.weight).forEach(ex => {
+    const vals = keys.map(k => {
+      const s = d.sessions[k];
+      if (!s[ex.id]) return null;
+      return Math.max(...s[ex.id].sets.map(st => parseInt(st.reps) || 0));
+    }).filter(v => v !== null);
+    if (vals.length < 2) return;
+    const diff = vals[vals.length-1] - vals[0];
+    const cls = diff >= 0 ? 'prog-gain' : 'prog-loss';
+    const sign = diff >= 0 ? '+' : '';
+    html += `<div class="prog-card">
+      <div class="prog-name">${ex.name}</div>
+      <div class="prog-row"><span>Best: ${vals[0]} → ${vals[vals.length-1]} reps</span><span class="${cls}">${sign}${diff}</span></div>
+    </div>`;
+  });
+
+  document.getElementById('content').innerHTML = html;
+}
+
+function showTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach((el, i) => {
+    el.classList.toggle('active', ['workout','history','stats'][i] === tab);
+  });
+  if (tab === 'workout') renderWorkout();
+  else if (tab === 'history') renderHistory();
+  else renderStats();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+renderWorkout();
+</script>
+</body>
+</html>
