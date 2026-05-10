@@ -4,351 +4,355 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Workout">
-<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="System">
+<meta name="theme-color" content="#05080f">
 <link rel="manifest" href="manifest.json">
-<title>Home Workout</title>
+<title>System — Arise</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #1a1a1a; max-width: 480px; margin: 0 auto; min-height: 100vh; }
-  
-  .topbar { background: #fff; padding: 16px 20px 12px; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
-  .topbar h1 { font-size: 20px; font-weight: 600; }
-  .topbar p { font-size: 13px; color: #888; margin-top: 2px; }
-
-  .tabs { display: flex; background: #fff; border-bottom: 1px solid #eee; }
-  .tab { flex: 1; padding: 12px 0; text-align: center; font-size: 14px; color: #888; border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; font-weight: 500; }
-  .tab.active { color: #1a1a1a; border-bottom-color: #1a1a1a; }
-
-  .content { padding: 16px; }
-
-  .day-badge { display: inline-block; background: #f0f0f0; color: #555; font-size: 12px; padding: 4px 12px; border-radius: 20px; margin-bottom: 16px; font-weight: 500; }
-
-  .ex-card { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-  .ex-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
-  .ex-name { font-size: 16px; font-weight: 600; }
-  .done-check { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #ddd; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.2s; flex-shrink: 0; }
-  .done-check.checked { background: #22c55e; border-color: #22c55e; color: #fff; }
-  .suggestion { font-size: 12px; color: #888; margin-bottom: 12px; }
-  .suggestion.up { color: #16a34a; font-weight: 500; }
-
-  .sets-header { display: grid; grid-template-columns: 36px 1fr 1fr 60px; gap: 6px; margin-bottom: 6px; }
-  .sets-header span { font-size: 11px; color: #aaa; text-align: center; text-transform: uppercase; letter-spacing: 0.5px; }
-  .set-row { display: grid; grid-template-columns: 36px 1fr 1fr 60px; gap: 6px; margin-bottom: 6px; align-items: center; }
-  .set-num { font-size: 13px; color: #aaa; text-align: center; }
-  .set-row input { padding: 8px 6px; font-size: 15px; text-align: center; border: 1px solid #e5e5e5; border-radius: 8px; background: #fafafa; color: #1a1a1a; width: 100%; }
-  .set-row input:focus { outline: none; border-color: #1a1a1a; background: #fff; }
-  .target-badge { font-size: 12px; color: #aaa; text-align: center; }
-
-  .rest-timer { background: #f8f8f8; border-radius: 10px; padding: 10px 14px; margin-top: 10px; display: flex; align-items: center; justify-content: space-between; }
-  .rest-label { font-size: 13px; color: #888; }
-  .rest-btn { padding: 6px 14px; background: #1a1a1a; color: #fff; border: none; border-radius: 8px; font-size: 13px; cursor: pointer; }
-  .rest-count { font-size: 16px; font-weight: 600; color: #1a1a1a; min-width: 40px; text-align: center; }
-
-  .save-btn { width: 100%; padding: 14px; background: #1a1a1a; color: #fff; border: none; border-radius: 14px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 8px; letter-spacing: 0.3px; }
-  .save-btn:active { opacity: 0.8; }
-
-  .hist-card { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-  .hist-date { font-size: 13px; color: #888; margin-bottom: 10px; font-weight: 500; }
-  .hist-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
-  .hist-row:last-child { border-bottom: none; }
-  .hist-val { color: #888; font-size: 13px; }
-
-  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-  .stat-box { background: #fff; border-radius: 14px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-  .stat-label { font-size: 12px; color: #888; margin-bottom: 4px; }
-  .stat-val { font-size: 28px; font-weight: 600; }
-
-  .prog-card { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-  .prog-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-  .prog-row { display: flex; justify-content: space-between; font-size: 14px; }
-  .prog-gain { color: #16a34a; font-weight: 500; }
-  .prog-loss { color: #dc2626; font-weight: 500; }
-
-  .empty { text-align: center; padding: 40px 20px; color: #aaa; font-size: 14px; }
-
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; padding: 12px 24px; border-radius: 10px; font-size: 14px; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 100; white-space: nowrap; }
-  .toast.show { opacity: 1; }
-
-  .timer-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 50; align-items: center; justify-content: center; }
-  .timer-overlay.show { display: flex; }
-  .timer-box { background: #fff; border-radius: 20px; padding: 32px; text-align: center; width: 260px; }
-  .timer-title { font-size: 15px; color: #888; margin-bottom: 8px; }
-  .timer-num { font-size: 56px; font-weight: 700; margin-bottom: 20px; }
-  .timer-skip { padding: 10px 28px; background: #1a1a1a; color: #fff; border: none; border-radius: 10px; font-size: 15px; cursor: pointer; }
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
+:root{--bg:#05080f;--bg2:#090d18;--bg3:#0d1525;--blue:#4fc3f7;--blue-dim:#1e4a6e;--blue-glow:rgba(79,195,247,0.15);--purple:#7c4dff;--text:#e8f4fd;--text-dim:#5a7a99;--text-mid:#8aafc8;--gold:#ffd54f;--green:#69f0ae;--border:rgba(79,195,247,0.2);--border-bright:rgba(79,195,247,0.5)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Rajdhani',sans-serif;background:var(--bg);color:var(--text);max-width:480px;margin:0 auto;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:999}
+.topbar{background:linear-gradient(180deg,#07111f 0%,var(--bg) 100%);padding:20px 20px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.sys-label{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--blue);letter-spacing:3px;opacity:.7;margin-bottom:3px}
+.topbar h1{font-size:22px;font-weight:700;letter-spacing:2px;text-transform:uppercase;text-shadow:0 0 20px rgba(79,195,247,0.4)}
+.top-date{font-size:11px;color:var(--text-dim);margin-top:2px;font-family:'Share Tech Mono',monospace;letter-spacing:1px}
+.rank-bar{display:flex;align-items:center;gap:12px;margin-top:12px;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);border-radius:6px}
+.rank-letter{font-size:22px;font-weight:700;color:var(--gold);text-shadow:0 0 12px rgba(255,213,79,0.5);min-width:24px}
+.rank-info{flex:1}
+.rank-name{font-size:13px;font-weight:600;letter-spacing:1px}
+.rank-sub{font-size:10px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;margin-top:1px}
+.xp-bg{height:3px;background:rgba(79,195,247,0.1);border-radius:2px;overflow:hidden;margin-top:6px}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--blue-dim),var(--blue));border-radius:2px;transition:width .6s ease}
+.tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--border)}
+.tab{flex:1;padding:12px 0;text-align:center;font-size:13px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-dim);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:'Rajdhani',sans-serif}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);text-shadow:0 0 10px rgba(79,195,247,0.5)}
+.content{padding:16px}
+.day-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:12px 16px;background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:6px}
+.day-icon{font-size:20px}
+.day-title{font-size:16px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--blue);text-shadow:0 0 10px rgba(79,195,247,0.3)}
+.day-sub{font-size:11px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;margin-top:2px}
+.quest-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px;position:relative;overflow:hidden;transition:border-color .2s}
+.quest-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:.3}
+.quest-card.completed{border-color:rgba(105,240,174,0.3);background:rgba(105,240,174,0.03)}
+.quest-card.completed::before{background:linear-gradient(90deg,transparent,var(--green),transparent)}
+.quest-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
+.quest-name{font-size:15px;font-weight:700;letter-spacing:.5px}
+.quest-check{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--border-bright);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--green);transition:all .2s;flex-shrink:0}
+.quest-check.checked{background:rgba(105,240,174,0.1);border-color:var(--green);box-shadow:0 0 10px rgba(105,240,174,0.2)}
+.quest-note{font-size:11px;color:var(--text-dim);margin-bottom:8px;font-family:'Share Tech Mono',monospace;letter-spacing:.5px}
+.sug-pill{display:inline-block;font-size:10px;padding:3px 10px;border-radius:3px;margin-bottom:10px;font-family:'Share Tech Mono',monospace;letter-spacing:.5px}
+.sug-pill.new{background:rgba(124,77,255,0.15);color:#b39ddb;border:1px solid rgba(124,77,255,0.3)}
+.sug-pill.up{background:rgba(105,240,174,0.1);color:var(--green);border:1px solid rgba(105,240,174,0.3)}
+.sug-pill.same{background:rgba(79,195,247,0.05);color:var(--text-dim);border:1px solid var(--border)}
+.sets-table{width:100%;border-collapse:collapse}
+.sets-table th{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:0 4px 6px;text-align:center;font-weight:500;font-family:'Share Tech Mono',monospace}
+.sets-table td{padding:3px 4px;text-align:center}
+.set-lbl{font-size:12px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;width:28px}
+.sets-table input{width:100%;padding:7px 4px;font-size:15px;font-weight:600;text-align:center;background:var(--bg3);border:1px solid var(--border);border-radius:5px;color:var(--text);font-family:'Rajdhani',sans-serif;transition:border-color .2s,box-shadow .2s}
+.sets-table input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 8px rgba(79,195,247,0.2)}
+.target-cell{font-size:12px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;width:40px}
+.rest-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.rest-lbl{font-size:11px;color:var(--text-dim);font-family:'Share Tech Mono',monospace}
+.rest-btn{padding:5px 14px;background:transparent;border:1px solid var(--border-bright);border-radius:4px;color:var(--blue);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;font-family:'Rajdhani',sans-serif;transition:all .2s}
+.rest-btn:hover{background:var(--blue-glow)}
+.save-btn{width:100%;padding:14px;background:transparent;border:1px solid var(--blue);border-radius:8px;color:var(--blue);font-size:16px;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;margin-top:12px;font-family:'Rajdhani',sans-serif;box-shadow:0 0 20px rgba(79,195,247,0.1),inset 0 0 20px rgba(79,195,247,0.03);transition:all .2s}
+.save-btn:active{box-shadow:0 0 30px rgba(79,195,247,0.3),inset 0 0 30px rgba(79,195,247,0.08)}
+.timer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:50;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.timer-overlay.show{display:flex}
+.timer-box{background:var(--bg2);border:1px solid var(--border-bright);border-radius:12px;padding:36px 40px;text-align:center;box-shadow:0 0 40px rgba(79,195,247,0.15);min-width:240px}
+.t-sys{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--blue);letter-spacing:3px;margin-bottom:8px;opacity:.7}
+.t-label{font-size:14px;color:var(--text-dim);margin-bottom:12px;letter-spacing:1px}
+.t-num{font-size:64px;font-weight:700;color:var(--blue);text-shadow:0 0 30px rgba(79,195,247,0.5);margin-bottom:24px;font-family:'Share Tech Mono',monospace}
+.t-skip{padding:10px 28px;background:transparent;border:1px solid var(--blue);border-radius:6px;color:var(--blue);font-size:14px;font-weight:700;letter-spacing:2px;cursor:pointer;font-family:'Rajdhani',sans-serif;text-transform:uppercase}
+.hist-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px}
+.hist-date{font-size:11px;color:var(--blue);margin-bottom:10px;font-family:'Share Tech Mono',monospace;letter-spacing:1px}
+.hist-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(79,195,247,0.08);font-size:13px}
+.hist-row:last-child{border-bottom:none}
+.hist-name{color:var(--text-mid)}
+.hist-val{color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:11px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-box{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+.stat-lbl{font-size:10px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;font-family:'Share Tech Mono',monospace;margin-bottom:6px}
+.stat-val{font-size:32px;font-weight:700;color:var(--blue);text-shadow:0 0 15px rgba(79,195,247,0.3)}
+.prog-card{background:var(--bg2);border:1px solid var(--border);border-left:2px solid var(--purple);border-radius:8px;padding:12px 14px;margin-bottom:8px}
+.prog-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.prog-row{display:flex;justify-content:space-between;font-size:12px}
+.prog-nums{color:var(--text-dim);font-family:'Share Tech Mono',monospace}
+.prog-gain{color:var(--green);font-weight:700;font-family:'Share Tech Mono',monospace}
+.prog-loss{color:#ef5350;font-weight:700;font-family:'Share Tech Mono',monospace}
+.sec-title{font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;font-family:'Share Tech Mono',monospace;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.empty{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:13px;font-family:'Share Tech Mono',monospace;letter-spacing:1px;line-height:2}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--bg3);border:1px solid var(--blue);color:var(--blue);padding:10px 24px;border-radius:6px;font-size:12px;font-family:'Share Tech Mono',monospace;letter-spacing:1px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:100;white-space:nowrap;box-shadow:0 0 20px rgba(79,195,247,0.2)}
+.toast.show{opacity:1}
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  <h1>Home Workout</h1>
-  <p id="top-date">Exam period maintenance</p>
+  <div class="sys-label">[ system ]</div>
+  <h1>Daily Quest</h1>
+  <div class="top-date" id="top-date"></div>
+  <div class="rank-bar">
+    <div class="rank-letter" id="rank-letter">E</div>
+    <div class="rank-info">
+      <div class="rank-name" id="rank-name">E-Rank Hunter</div>
+      <div class="rank-sub" id="rank-sub">0 sessions</div>
+      <div class="xp-bg"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+    </div>
+  </div>
 </div>
 
 <div class="tabs">
-  <button class="tab active" onclick="showTab('workout')">Today</button>
-  <button class="tab" onclick="showTab('history')">History</button>
-  <button class="tab" onclick="showTab('stats')">Progress</button>
+  <button class="tab active" onclick="showTab('workout')">Quest</button>
+  <button class="tab" onclick="showTab('history')">Log</button>
+  <button class="tab" onclick="showTab('stats')">Status</button>
 </div>
 
 <div class="content" id="content"></div>
-
 <div class="toast" id="toast"></div>
 
 <div class="timer-overlay" id="timer-overlay">
   <div class="timer-box">
-    <div class="timer-title">Rest timer</div>
-    <div class="timer-num" id="timer-num">60</div>
-    <button class="timer-skip" onclick="skipTimer()">Done resting</button>
+    <div class="t-sys">[ system ]</div>
+    <div class="t-label">Recovery Phase</div>
+    <div class="t-num" id="t-num">60</div>
+    <button class="t-skip" onclick="skipTimer()">Continue</button>
   </div>
 </div>
 
 <script>
-const EXERCISES = [
-  { id: 'pushup', name: 'Push-ups', sets: 3, repsTarget: 15, weight: false, note: 'Standard — go to failure' },
-  { id: 'widepush', name: 'Wide push-ups', sets: 3, repsTarget: 12, weight: false, note: 'Hands wider than shoulder width' },
-  { id: 'diamondpush', name: 'Diamond push-ups', sets: 3, repsTarget: 10, weight: false, note: 'Hands form a diamond shape' },
-  { id: 'dbpress', name: 'Dumbbell shoulder press', sets: 3, repsTarget: 12, weight: true, note: '5kg dumbbell, seated or standing' },
-  { id: 'lateral', name: 'Lateral raises', sets: 3, repsTarget: 15, weight: true, note: '5kg dumbbell, slow and controlled' },
-  { id: 'curl', name: 'Bicep curls', sets: 3, repsTarget: 12, weight: true, note: '5kg dumbbell, one arm or both' },
-  { id: 'tricepkick', name: 'Tricep kickbacks', sets: 3, repsTarget: 12, weight: true, note: '5kg dumbbell, hinge at hips' },
-  { id: 'squat', name: 'Bodyweight squats', sets: 3, repsTarget: 20, weight: false, note: 'Full depth, slow down' },
-  { id: 'lunge', name: 'Lunges', sets: 3, repsTarget: 12, weight: false, note: 'Each leg — alternate' },
-  { id: 'glute', name: 'Glute bridges', sets: 3, repsTarget: 20, weight: false, note: 'Squeeze at the top, hold 1 sec' },
-  { id: 'plank', name: 'Plank', sets: 3, repsTarget: 60, weight: false, note: 'Hold in seconds — stay tight' },
+const DAYS=[
+  {id:'A',name:'Push Protocol',sub:'Chest · Shoulders · Triceps',icon:'⚔',exercises:[
+    {id:'pushup',name:'Push-ups',sets:3,target:15,weight:false,note:'Full range — chest to floor'},
+    {id:'widepush',name:'Wide push-ups',sets:3,target:12,weight:false,note:'Wider grip — targets chest'},
+    {id:'diamondpush',name:'Diamond push-ups',sets:3,target:10,weight:false,note:'Hands form diamond — triceps'},
+    {id:'dbpress',name:'DB Shoulder press',sets:3,target:12,weight:true,note:'5kg — seated, controlled'},
+    {id:'lateral',name:'Lateral raises',sets:3,target:15,weight:true,note:'5kg — slow, feel the burn'},
+  ]},
+  {id:'B',name:'Arms Protocol',sub:'Biceps · Triceps · Core',icon:'🗡',exercises:[
+    {id:'curl',name:'Bicep curls',sets:3,target:12,weight:true,note:'5kg — squeeze at top'},
+    {id:'hammer',name:'Hammer curls',sets:3,target:12,weight:true,note:'5kg — neutral grip'},
+    {id:'tricepkick',name:'Tricep kickbacks',sets:3,target:12,weight:true,note:'5kg — hinge at hips'},
+    {id:'plank',name:'Plank hold',sets:3,target:45,weight:false,note:'Seconds — stay tight, breathe'},
+    {id:'crunch',name:'Crunches',sets:3,target:20,weight:false,note:'Slow reps — control the movement'},
+  ]},
+  {id:'C',name:'Legs Protocol',sub:'Quads · Glutes · Core',icon:'🛡',exercises:[
+    {id:'squat',name:'Bodyweight squats',sets:3,target:25,weight:false,note:'Full depth — slow down, fast up'},
+    {id:'lunge',name:'Lunges',sets:3,target:12,weight:false,note:'Each leg — torso upright'},
+    {id:'glute',name:'Glute bridges',sets:3,target:20,weight:false,note:'Squeeze and hold 1 sec at top'},
+    {id:'calf',name:'Calf raises',sets:3,target:25,weight:false,note:'Stand on step edge if possible'},
+    {id:'mtnclimb',name:'Mountain climbers',sets:3,target:20,weight:false,note:'Each leg — hips down'},
+  ]},
 ];
 
-const DAYS = ['Day A', 'Day B', 'Day C'];
-let timerInterval = null;
-let timerSeconds = 0;
-let currentTab = 'workout';
+const RANKS=[
+  {l:'E',name:'E-Rank Hunter',min:0,next:10},
+  {l:'D',name:'D-Rank Hunter',min:10,next:25},
+  {l:'C',name:'C-Rank Hunter',min:25,next:50},
+  {l:'B',name:'B-Rank Hunter',min:50,next:100},
+  {l:'A',name:'A-Rank Hunter',min:100,next:200},
+  {l:'S',name:'S-Rank Hunter',min:200,next:9999},
+];
 
-function getData() { try { return JSON.parse(localStorage.getItem('hw_data') || '{}'); } catch { return {}; } }
-function saveData(d) { try { localStorage.setItem('hw_data', JSON.stringify(d)); } catch {} }
+let timerInt=null,timerSecs=0;
 
-function getTodayKey() { return new Date().toISOString().split('T')[0]; }
+function getData(){try{return JSON.parse(localStorage.getItem('sl_v2')||'{}')}catch{return{}}}
+function saveData(d){try{localStorage.setItem('sl_v2',JSON.stringify(d))}catch{}}
+function todayKey(){return new Date().toISOString().split('T')[0]}
+function sessionCount(){return Object.keys(getData().sessions||{}).length}
+function currentDay(){return DAYS[sessionCount()%3]}
 
-function getSessionCount() {
-  const d = getData();
-  return Object.keys(d.sessions || {}).length;
+function getRank(n){
+  let r=RANKS[0];
+  for(const x of RANKS){if(n>=x.min)r=x;}
+  return r;
 }
 
-function getLastSession(exId) {
-  const d = getData();
-  const keys = Object.keys(d.sessions || {}).sort().reverse();
-  for (const k of keys) {
-    if (d.sessions[k][exId]) return d.sessions[k][exId];
+function updateRank(){
+  const n=sessionCount(),r=getRank(n);
+  const next=RANKS[RANKS.indexOf(r)+1];
+  document.getElementById('rank-letter').textContent=r.l;
+  document.getElementById('rank-name').textContent=r.name;
+  if(next){
+    const prog=n-r.min,needed=next.min-r.min;
+    const pct=Math.min(100,Math.round(prog/needed*100));
+    document.getElementById('xp-fill').style.width=pct+'%';
+    document.getElementById('rank-sub').textContent=`${n} sessions · ${needed-prog} to ${next.l}-Rank`;
+  } else {
+    document.getElementById('xp-fill').style.width='100%';
+    document.getElementById('rank-sub').textContent=`${n} sessions · Max rank achieved`;
   }
+}
+
+function getLastEx(exId){
+  const d=getData();
+  const keys=Object.keys(d.sessions||{}).sort().reverse();
+  for(const k of keys){if(d.sessions[k][exId])return d.sessions[k][exId];}
   return null;
 }
 
-function getSuggestion(ex) {
-  const last = getLastSession(ex.id);
-  if (!last) return { text: 'First time — start easy', cls: '' };
-  if (!ex.weight) {
-    const allHit = last.sets.every(s => parseInt(s.reps) >= ex.repsTarget);
-    return allHit
-      ? { text: 'Try harder variation or add a set', cls: 'up' }
-      : { text: `Target: ${ex.repsTarget} reps — keep pushing`, cls: '' };
-  }
-  const allHit = last.sets.every(s => parseInt(s.reps) >= ex.repsTarget);
-  return allHit
-    ? { text: 'All sets hit — increase reps or slow down tempo', cls: 'up' }
-    : { text: `Same weight 5kg — hit ${ex.repsTarget} reps first`, cls: '' };
+function getSug(ex){
+  const last=getLastEx(ex.id);
+  if(!last)return{text:'[ FIRST ATTEMPT ]',cls:'new'};
+  const allHit=last.sets.every(s=>parseInt(s.reps)>=ex.target);
+  return allHit?{text:'[ THRESHOLD EXCEEDED — PUSH HARDER ]',cls:'up'}:{text:`[ TARGET: ${ex.target} REPS — HOLD POSITION ]`,cls:'same'};
 }
 
-function renderWorkout() {
-  const d = getData();
-  const todayKey = getTodayKey();
-  const existing = (d.sessions || {})[todayKey] || {};
-  const done = d.done || {};
-  const dayLabel = DAYS[getSessionCount() % 3];
+function renderWorkout(){
+  const day=currentDay();
+  const d=getData();
+  const tk=todayKey();
+  const existing=(d.sessions||{})[tk]||{};
+  const done=d.done||{};
+  document.getElementById('top-date').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short',year:'numeric'});
+  updateRank();
 
-  document.getElementById('top-date').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'short' });
+  let h=`<div class="day-header">
+    <div class="day-icon">${day.icon}</div>
+    <div><div class="day-title">Day ${day.id} — ${day.name}</div><div class="day-sub">${day.sub}</div></div>
+  </div>`;
 
-  let html = `<span class="day-badge">${dayLabel} — Exam maintenance</span>`;
-
-  EXERCISES.forEach(ex => {
-    const sug = getSuggestion(ex);
-    const isDone = !!done[ex.id];
-    const prev = existing[ex.id];
-
-    html += `<div class="ex-card" id="card-${ex.id}">
-      <div class="ex-header">
-        <div class="ex-name">${ex.name}</div>
-        <button class="done-check ${isDone ? 'checked' : ''}" onclick="toggleDone('${ex.id}')">${isDone ? '✓' : ''}</button>
+  day.exercises.forEach(ex=>{
+    const sug=getSug(ex);
+    const isDone=!!done[ex.id];
+    const prev=existing[ex.id];
+    h+=`<div class="quest-card ${isDone?'completed':''}" id="card-${ex.id}">
+      <div class="quest-header">
+        <div class="quest-name">${ex.name}</div>
+        <button class="quest-check ${isDone?'checked':''}" onclick="toggleDone('${ex.id}')">${isDone?'✓':''}</button>
       </div>
-      <div class="suggestion ${sug.cls}">${sug.text}</div>
-      <div style="font-size:12px;color:#bbb;margin-bottom:10px;">${ex.note}</div>
-      <div class="sets-header">
-        <span>Set</span>
-        <span>${ex.weight ? 'Weight' : 'Reps'}</span>
-        <span>${ex.weight ? 'Reps' : 'Notes'}</span>
-        <span>Target</span>
-      </div>`;
-
-    for (let i = 1; i <= ex.sets; i++) {
-      const ps = prev ? prev.sets[i-1] : null;
-      if (ex.weight) {
-        html += `<div class="set-row">
-          <div class="set-num">${i}</div>
-          <input type="number" id="${ex.id}-w${i}" placeholder="5" value="${ps ? ps.weight : '5'}" step="0.5" min="0" inputmode="decimal">
-          <input type="number" id="${ex.id}-r${i}" placeholder="0" value="${ps ? ps.reps : ''}" min="0" max="50" inputmode="numeric">
-          <div class="target-badge">${ex.repsTarget}</div>
-        </div>`;
-      } else {
-        html += `<div class="set-row">
-          <div class="set-num">${i}</div>
-          <input type="number" id="${ex.id}-r${i}" placeholder="0" value="${ps ? ps.reps : ''}" min="0" max="100" inputmode="numeric" style="grid-column: span 2;">
-          <div class="target-badge">${ex.repsTarget}</div>
-        </div>`;
-      }
+      <div class="quest-note">${ex.note}</div>
+      <span class="sug-pill ${sug.cls}">${sug.text}</span>
+      <table class="sets-table"><thead><tr>
+        <th style="width:28px">Set</th>
+        ${ex.weight?'<th>kg</th>':''}
+        <th>Reps</th>
+        <th style="width:40px">Goal</th>
+      </tr></thead><tbody>`;
+    for(let i=1;i<=ex.sets;i++){
+      const ps=prev?prev.sets[i-1]:null;
+      h+=`<tr>
+        <td class="set-lbl">${i}</td>
+        ${ex.weight?`<td><input type="number" id="${ex.id}-w${i}" value="${ps?ps.weight:'5'}" step="0.5" min="0" inputmode="decimal"></td>`:''}
+        <td><input type="number" id="${ex.id}-r${i}" value="${ps?ps.reps:''}" min="0" max="100" inputmode="numeric" placeholder="0"></td>
+        <td class="target-cell">${ex.target}</td>
+      </tr>`;
     }
-
-    html += `<div class="rest-timer">
-      <span class="rest-label">Rest 60s after sets</span>
-      <button class="rest-btn" onclick="startTimer(60)">Start</button>
-    </div></div>`;
+    h+=`</tbody></table>
+      <div class="rest-row">
+        <span class="rest-lbl">[ REST 60s ]</span>
+        <button class="rest-btn" onclick="startTimer(60)">▶ START</button>
+      </div>
+    </div>`;
   });
 
-  html += `<button class="save-btn" onclick="saveSession()">Save session</button>`;
-  document.getElementById('content').innerHTML = html;
+  h+=`<button class="save-btn" onclick="saveSession('${day.id}')">[ Complete Quest ]</button>`;
+  document.getElementById('content').innerHTML=h;
 }
 
-function toggleDone(exId) {
-  const d = getData();
-  if (!d.done) d.done = {};
-  d.done[exId] = !d.done[exId];
+function toggleDone(exId){
+  const d=getData();
+  if(!d.done)d.done={};
+  d.done[exId]=!d.done[exId];
   saveData(d);
   renderWorkout();
 }
 
-function saveSession() {
-  const d = getData();
-  if (!d.sessions) d.sessions = {};
-  const todayKey = getTodayKey();
-  const session = {};
-
-  EXERCISES.forEach(ex => {
-    const sets = [];
-    let hasData = false;
-    for (let i = 1; i <= ex.sets; i++) {
-      const wEl = document.getElementById(`${ex.id}-w${i}`);
-      const rEl = document.getElementById(`${ex.id}-r${i}`);
-      const w = wEl ? wEl.value : '5';
-      const r = rEl ? rEl.value : '0';
-      if (r && r !== '0') hasData = true;
-      sets.push({ weight: w || '5', reps: r || '0' });
+function saveSession(dayId){
+  const d=getData();
+  if(!d.sessions)d.sessions={};
+  const tk=todayKey();
+  const day=DAYS.find(x=>x.id===dayId);
+  const session={dayId};
+  day.exercises.forEach(ex=>{
+    const sets=[];let hasData=false;
+    for(let i=1;i<=ex.sets;i++){
+      const wEl=document.getElementById(`${ex.id}-w${i}`);
+      const rEl=document.getElementById(`${ex.id}-r${i}`);
+      const w=wEl?wEl.value:'5',r=rEl?rEl.value:'0';
+      if(r&&r!=='0')hasData=true;
+      sets.push({weight:w||'5',reps:r||'0'});
     }
-    if (hasData) session[ex.id] = { weight: sets[0].weight || '5', sets };
+    if(hasData)session[ex.id]={weight:sets[0].weight,sets};
   });
-
-  d.sessions[todayKey] = session;
-  d.done = {};
+  d.sessions[tk]=session;d.done={};
   saveData(d);
-  showToast('Session saved!');
-  setTimeout(() => renderWorkout(), 500);
+  showToast('[ QUEST COMPLETE ]');
+  setTimeout(()=>{updateRank();renderWorkout();},600);
 }
 
-function startTimer(secs) {
-  clearInterval(timerInterval);
-  timerSeconds = secs;
-  document.getElementById('timer-num').textContent = timerSeconds;
-  document.getElementById('timer-overlay').classList.add('show');
-  timerInterval = setInterval(() => {
-    timerSeconds--;
-    document.getElementById('timer-num').textContent = timerSeconds;
-    if (timerSeconds <= 0) skipTimer();
-  }, 1000);
-}
-
-function skipTimer() {
-  clearInterval(timerInterval);
-  document.getElementById('timer-overlay').classList.remove('show');
-}
-
-function renderHistory() {
-  const d = getData();
-  const keys = Object.keys(d.sessions || {}).sort().reverse();
-  if (!keys.length) {
-    document.getElementById('content').innerHTML = '<div class="empty">No sessions logged yet.<br>Complete your first workout!</div>';
-    return;
-  }
-  let html = '';
-  keys.slice(0, 15).forEach((key, idx) => {
-    const s = d.sessions[key];
-    const total = Object.keys(d.sessions).sort();
-    const sessionIdx = total.indexOf(key);
-    html += `<div class="hist-card"><div class="hist-date">${key} — ${DAYS[sessionIdx % 3]}</div>`;
-    EXERCISES.forEach(ex => {
-      if (s[ex.id]) {
-        const sets = s[ex.id].sets;
-        const summary = sets.map(st => ex.weight ? `${st.weight}kg×${st.reps}` : `${st.reps} reps`).join(' · ');
-        html += `<div class="hist-row"><span>${ex.name}</span><span class="hist-val">${summary}</span></div>`;
+function renderHistory(){
+  const d=getData();
+  const keys=Object.keys(d.sessions||{}).sort().reverse();
+  if(!keys.length){document.getElementById('content').innerHTML='<div class="empty">NO RECORDS FOUND<br><br>Complete your first quest<br>to begin the log</div>';return;}
+  let h='<div class="sec-title">Session Log</div>';
+  keys.slice(0,15).forEach(k=>{
+    const s=d.sessions[k];
+    const day=DAYS.find(x=>x.id===s.dayId)||DAYS[0];
+    h+=`<div class="hist-card"><div class="hist-date">[ ${k} ] — Day ${day.id}: ${day.name}</div>`;
+    day.exercises.forEach(ex=>{
+      if(s[ex.id]){
+        const sum=s[ex.id].sets.map(st=>ex.weight?`${st.weight}kg×${st.reps}`:`${st.reps}r`).join(' | ');
+        h+=`<div class="hist-row"><span class="hist-name">${ex.name}</span><span class="hist-val">${sum}</span></div>`;
       }
     });
-    html += '</div>';
+    h+='</div>';
   });
-  document.getElementById('content').innerHTML = html;
+  document.getElementById('content').innerHTML=h;
 }
 
-function renderStats() {
-  const d = getData();
-  const keys = Object.keys(d.sessions || {}).sort();
-  const total = keys.length;
+function renderStats(){
+  const d=getData();
+  const keys=Object.keys(d.sessions||{}).sort();
+  const total=keys.length;
+  const rank=getRank(total);
+  let h=`<div class="stat-grid">
+    <div class="stat-box"><div class="stat-lbl">Rank</div><div class="stat-val" style="color:var(--gold);text-shadow:0 0 15px rgba(255,213,79,0.4)">${rank.l}</div></div>
+    <div class="stat-box"><div class="stat-lbl">Sessions</div><div class="stat-val">${total}</div></div>
+    <div class="stat-box"><div class="stat-lbl">Weeks</div><div class="stat-val">${Math.floor(total/3)}</div></div>
+    <div class="stat-box"><div class="stat-lbl">Exercises</div><div class="stat-val">${total*5}</div></div>
+  </div><div class="sec-title">Exercise Progress</div>`;
 
-  let html = `<div class="stat-grid">
-    <div class="stat-box"><div class="stat-label">Sessions done</div><div class="stat-val">${total}</div></div>
-    <div class="stat-box"><div class="stat-label">Weeks trained</div><div class="stat-val">${Math.floor(total / 3)}</div></div>
-  </div>`;
+  if(total<2){h+='<div class="empty">INSUFFICIENT DATA<br><br>Complete 2+ sessions<br>to track progress</div>';document.getElementById('content').innerHTML=h;return;}
 
-  if (total < 2) {
-    html += '<div class="empty">Complete at least 2 sessions<br>to see progress here</div>';
-    document.getElementById('content').innerHTML = html;
-    return;
-  }
-
-  EXERCISES.filter(ex => !ex.weight).forEach(ex => {
-    const vals = keys.map(k => {
-      const s = d.sessions[k];
-      if (!s[ex.id]) return null;
-      return Math.max(...s[ex.id].sets.map(st => parseInt(st.reps) || 0));
-    }).filter(v => v !== null);
-    if (vals.length < 2) return;
-    const diff = vals[vals.length-1] - vals[0];
-    const cls = diff >= 0 ? 'prog-gain' : 'prog-loss';
-    const sign = diff >= 0 ? '+' : '';
-    html += `<div class="prog-card">
+  const seen=new Set();
+  DAYS.flatMap(x=>x.exercises).forEach(ex=>{
+    if(seen.has(ex.id))return;seen.add(ex.id);
+    const vals=keys.map(k=>{const s=d.sessions[k];if(!s||!s[ex.id])return null;return Math.max(...s[ex.id].sets.map(st=>parseInt(st.reps)||0));}).filter(v=>v!==null);
+    if(vals.length<2)return;
+    const diff=vals[vals.length-1]-vals[0];
+    h+=`<div class="prog-card">
       <div class="prog-name">${ex.name}</div>
-      <div class="prog-row"><span>Best: ${vals[0]} → ${vals[vals.length-1]} reps</span><span class="${cls}">${sign}${diff}</span></div>
+      <div class="prog-row"><span class="prog-nums">${vals[0]} → ${vals[vals.length-1]} reps</span><span class="${diff>=0?'prog-gain':'prog-loss'}">${diff>=0?'+':''}${diff}</span></div>
     </div>`;
   });
-
-  document.getElementById('content').innerHTML = html;
+  document.getElementById('content').innerHTML=h;
 }
 
-function showTab(tab) {
-  currentTab = tab;
-  document.querySelectorAll('.tab').forEach((el, i) => {
-    el.classList.toggle('active', ['workout','history','stats'][i] === tab);
-  });
-  if (tab === 'workout') renderWorkout();
-  else if (tab === 'history') renderHistory();
+function startTimer(s){
+  clearInterval(timerInt);timerSecs=s;
+  document.getElementById('t-num').textContent=s;
+  document.getElementById('timer-overlay').classList.add('show');
+  timerInt=setInterval(()=>{timerSecs--;document.getElementById('t-num').textContent=timerSecs;if(timerSecs<=0)skipTimer();},1000);
+}
+function skipTimer(){clearInterval(timerInt);document.getElementById('timer-overlay').classList.remove('show');}
+
+function showTab(tab){
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['workout','history','stats'][i]===tab));
+  if(tab==='workout')renderWorkout();
+  else if(tab==='history')renderHistory();
   else renderStats();
 }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
 }
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
-
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 renderWorkout();
 </script>
 </body>
